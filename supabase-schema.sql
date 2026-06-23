@@ -1,7 +1,6 @@
--- Jalankan file ini di Supabase SQL Editor.
--- Admin awal:
--- username: admin
--- password: Admin123
+-- MBTI SUPABASE REPAIR FUNCTIONS
+-- Jalankan di Supabase SQL Editor jika website menampilkan:
+-- "Koneksi Supabase berhasil, tetapi fungsi database belum siap."
 
 create extension if not exists pgcrypto;
 
@@ -41,9 +40,6 @@ revoke all on public.mbti_accounts from anon, authenticated;
 revoke all on public.mbti_sessions from anon, authenticated;
 revoke all on public.mbti_results from anon, authenticated;
 
--- Akun admin awal dibuat/direset otomatis.
--- username: admin
--- password: Admin123
 insert into public.mbti_accounts (username, full_name, role, password_salt, password_hash)
 values ('admin', 'Admin', 'admin', 'DESY_RIYANTI_ADMIN_SALT_V1', '/QVhoCyuxV09qSp7tzPbOtbf6IgCnrTt7W/GDzGSiw8=')
 on conflict (username) do update
@@ -90,6 +86,7 @@ begin
   end if;
 
   v_token := gen_random_uuid();
+
   insert into public.mbti_sessions(token, account_id, expires_at)
   values(v_token, v_account.id, now() + interval '12 hours');
 
@@ -127,6 +124,7 @@ begin
   if v_admin_id is null then
     raise exception 'Unauthorized admin access';
   end if;
+
   return v_admin_id;
 end;
 $$;
@@ -194,6 +192,7 @@ set search_path = public
 as $$
 begin
   perform public.mbti_is_admin(p_admin_token);
+
   update public.mbti_accounts
   set password_salt = p_password_salt,
       password_hash = p_password_hash,
@@ -210,7 +209,9 @@ set search_path = public
 as $$
 begin
   perform public.mbti_is_admin(p_admin_token);
-  delete from public.mbti_accounts where id = p_account_id and role = 'participant';
+
+  delete from public.mbti_accounts
+  where id = p_account_id and role = 'participant';
 end;
 $$;
 
@@ -244,6 +245,8 @@ begin
 end;
 $$;
 
+grant usage on schema public to anon, authenticated;
+
 grant execute on function public.mbti_get_salt(text) to anon, authenticated;
 grant execute on function public.mbti_login(text, text) to anon, authenticated;
 grant execute on function public.mbti_logout(text) to anon, authenticated;
@@ -253,3 +256,8 @@ grant execute on function public.mbti_list_participants(text) to anon, authentic
 grant execute on function public.mbti_reset_participant_password(text, uuid, text, text) to anon, authenticated;
 grant execute on function public.mbti_delete_participant(text, uuid) to anon, authenticated;
 grant execute on function public.mbti_save_result(text, text, jsonb, jsonb) to anon, authenticated;
+
+notify pgrst, 'reload schema';
+
+-- Cek cepat. Harus muncul salt:
+select public.mbti_get_salt('admin') as admin_salt;
