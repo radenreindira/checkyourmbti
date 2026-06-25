@@ -1,25 +1,13 @@
-# Cek MBTI Online - Supabase Configured
+# Cek MBTI Online - CheckYourMBTI Print & Saran Karakter
 
-File ini sudah dikonfigurasi dengan Supabase URL dan anon public key yang diberikan.
+Perubahan:
+- Nama website pada lembar cetak hasil diganti menjadi `checkyourmbti`.
+- Dashboard/halaman utama tidak diganti.
+- Hasil tes sekarang menampilkan bagian `Masukan Karakter MBTI` sesuai tipe peserta.
+- Tombol `Download / Cetak Hasil` tetap membuka print dialog agar bisa cetak atau Save as PDF.
 
-## Login Admin
-Username: admin
-Password: Admin123
-
-## Urutan Pakai
-1. Jalankan `supabase-reset-full.sql` di Supabase SQL Editor.
-2. Upload semua file ke root repository GitHub.
+Cara update:
+1. Upload semua file di folder ini ke root repository GitHub.
+2. Pastikan file `index.html`, `style.css`, `app.js`, `config.js`, dan `vercel.json` berada langsung di root.
 3. Redeploy project di Vercel.
-4. Buka website dengan mode incognito.
-5. Login sebagai admin.
-
-## Struktur GitHub
-Pastikan file berada langsung di root repository:
-
-index.html
-style.css
-app.js
-config.js
-vercel.json
-supabase-reset-full.sql
-README.md
+4. Buka website dengan mode incognito atau hard refresh.
